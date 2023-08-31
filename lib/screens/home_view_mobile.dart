@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:test_application/screens/checkout_page.dart';
 
 import '../constants/colors.dart';
 import '../data/api/item_api.dart';
@@ -342,21 +343,37 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
-                      child: Container(
-                        width: 150,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: AppColors.orangeColor
-                        ),
-                        child: const Center(
-                          child: Text("Proceed to Book",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Montserrat',
-                            ),),
+                      child: GestureDetector(
+                        onTap: (){
+                          if(totalPrice == 0){
+                            SnackBar snackBar = const SnackBar(
+                              content: Text('Please select an Item!!!!'),
+                              behavior: SnackBarBehavior.floating,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          }else{
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const CheckOut()),
+                            );
+                          }
+                        },
+                        child: Container(
+                          width: 150,
+                          height: 50,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: AppColors.orangeColor
+                          ),
+                          child: const Center(
+                            child: Text("Proceed to Book",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat',
+                              ),),
+                          ),
                         ),
                       ),
                     )
