@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:test_application/constants/colors.dart';
 
 class BottomPanel extends StatelessWidget {
-  const BottomPanel({super.key});
+
+  final int totalCleaner;
+  final String itemName;
+  final int totalPrice;
+
+  const BottomPanel({super.key, required this.totalCleaner, required this.itemName, required this.totalPrice});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,7 @@ class BottomPanel extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("1 Cleaner, 2 hours+ 30 mins",
+                    Text("${totalCleaner} Cleaner, ${itemName}",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -47,7 +52,7 @@ class BottomPanel extends StatelessWidget {
                         fontFamily: 'Montserrat',
                       ),
                     ),
-                    Text("AED 85.00",
+                    Text("AED ${totalPrice}",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -60,15 +65,20 @@ class BottomPanel extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 10),
-                child: Text("Edit",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Montserrat',
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.blueColor,
-                  ),),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Text("Edit",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.blueColor,
+                    ),),
+                ),
               )
             ],
           ),
@@ -86,7 +96,7 @@ class BottomPanel extends StatelessWidget {
                   fontFamily: 'Montserrat',
                 ),
               ),
-              Text("AED 85.00",
+              Text("AED ${totalPrice}",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black,
@@ -110,7 +120,7 @@ class BottomPanel extends StatelessWidget {
                   fontFamily: 'Montserrat',
                 ),
               ),
-              Text("AED 85.00",
+              Text("AED ${totalPrice}",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black,

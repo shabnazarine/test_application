@@ -10,6 +10,8 @@ import '../data/api/item_api.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../model/item_model.dart';
+
 class HomeViewLarge extends StatefulWidget {
   const HomeViewLarge({super.key});
 
@@ -19,6 +21,20 @@ class HomeViewLarge extends StatefulWidget {
 
 class _HomeViewLargeState extends State<HomeViewLarge> {
 
+  bool showProgress = false;
+  int selectedIndex = 0;
+  int selectedListIndex = 0;
+  //List<Item> itemList = new List<Item>;
+  late String totalCleaner = "";
+  late String totalHours = "";
+  late String imageUrl = "";
+  late int unitPrice ;
+  //late Map<String, dynamic> itemList = {};
+  late List itemList = [];
+  late List<Item> itemListFromModel = [];
+  late int totalPrice = 0;
+  late String selectedItemName = "";
+
   void displayBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -26,45 +42,59 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
           return Container(
             height: MediaQuery.of(context).size.height  * 0.4,
             child: Center(
-              child: BottomPanel(),
+              child: BottomPanel(totalCleaner: selectedIndex+1, itemName: selectedItemName, totalPrice: totalPrice,),
             ),
           );
         });
   }
 
   void getItemFromApi() async {
-   /* ItemApi.getCharacters().then((response) {
-      setState(() {
-       var data = json.decode(response.body);
-       if(data != null){
-         ScaffoldMessenger.of(context).showSnackBar(
-             SnackBar(content: Text("Success"))
-         );
-       }
-       // characterList = list.map((model) => Character.fromJson(model)).toList();
-      });
-    });*/
-    ItemApi.fetchJSON(context).then((response) {
-      setState(() {
+    ItemApi.fetchJSON(context).then((response) async {
+      if(response != null){
         String responseBody = response.body;
         //Map<String, dynamic> myMap = json.decode(responseBody);
         var responseJSON = json.decode(responseBody);
-        var rest = responseJSON["data"]["title"];
-        print(rest);
-      });
+        totalCleaner = responseJSON["data"]["title"];
+        totalHours = responseJSON["data"]["itemTitle"];
+        imageUrl = responseJSON["data"]["items"][0]["image"];
+        unitPrice = responseJSON["data"]["items"][0]["items"][0]["unitPrice"];
+
+        itemList = json.decode(response.body)["data"]["items"][0]["items"];
+        await Future.delayed(const Duration(seconds: 5));
+        setState(() {
+          showProgress = false;
+        });
+      }else{
+
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      showProgress = true;
+    });
     getItemFromApi();
-    //FetchJSON();
+  }
+
+  _onSelected(int index) {
+    setState(() => selectedIndex = index);
+    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
+    //print(totalPrice);
+  }
+
+  _onListSelected(int index) {
+    setState(() => selectedListIndex = index);
+    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
+    selectedItemName = itemList[selectedListIndex]['itemName'];
+    //print(totalPrice);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return !showProgress ? Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.lightGrayColor.withOpacity(.20),
         leading: Icon(
@@ -84,7 +114,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
             ),
             SizedBox(height: 5,),
             Row(
-             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Dubai International Airport (DXB) - Dubai - United Arab Emirates",
                   style: TextStyle(
@@ -119,7 +149,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("How many cleaners do you need?",
+                  Text(totalCleaner,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -130,26 +160,37 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                   SizedBox(height: 10,),
                   Container(
                     height: 80,
-                   // width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 1,
-                         childAspectRatio: 1/1.8,
-                        mainAxisSpacing: 20,
-                        crossAxisSpacing: 20,
+                        childAspectRatio: 1/1.8,
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 5,
                       ),
-                      //shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      physics: AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      //physics: AlwaysScrollableScrollPhysics(),
+                      //shrinkWrap: true,
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
-                        return CleanerCard(cleanerCount: index+1, imageUrl: '', color: Colors.amberAccent, borderColor: Colors.amberAccent,);
+                        Color color = selectedIndex != null && selectedIndex == index
+                            ? AppColors.orangeColor
+                            : Colors.white;
+                        Color borderColor = selectedIndex != null && selectedIndex == index
+                            ? AppColors.yellowColor
+                            : AppColors.grayColor.withOpacity(.20);
+                        return GestureDetector(
+                          onTap: (){
+                            _onSelected(index);
+                          },
+                          child: CleanerCard(cleanerCount: index+1,
+                            imageUrl: imageUrl, color: color, borderColor: borderColor,),
+                        );
                       },
                     ),
                   ),
                   SizedBox(height: 20,),
-                  Text("How many hours do you need?",
+                  Text(totalHours,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -161,9 +202,25 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                   Container(
                     height: 500,
                     child: ListView.builder(
-                        itemCount: 10,
+                        itemCount: itemList.length,
                         itemBuilder: (BuildContext context, int index){
-                          return HourCard( hours: '', unitPrice: 0, title: '', unitOfMeasure: '', color: Colors.amberAccent, borderColor: Colors.amberAccent,);
+                          String itemName = itemList[index]['itemName'];
+                          int unitPrice = itemList[index]['unitPrice'];
+                          String subTitle = itemList[index]['subTitle'];
+                          String unitOfMeasure = itemList[index]['unitOfMeasure'];
+                          Color color = selectedListIndex != null && selectedListIndex == index
+                              ? AppColors.orangeColor
+                              : Colors.white;
+                          Color borderColor = selectedListIndex != null && selectedListIndex == index
+                              ? AppColors.yellowColor
+                              : AppColors.grayColor.withOpacity(.20);
+                          return GestureDetector(
+                              onTap: (){
+                                _onListSelected(index);
+                              },
+                              child: HourCard(hours: itemName, unitPrice: unitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
+                                color: color, borderColor: borderColor,)
+                          );
                         }),
                   ),
                   SizedBox(height: 20,),
@@ -219,13 +276,13 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
             Padding(
               padding: const EdgeInsets.only(left: 30, top: 10),
               child: Row(
-               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("AED 85.00",
+                      Text("AED ${totalPrice}",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black,
@@ -263,8 +320,8 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                       width: 150,
                       height: 50,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: AppColors.orangeColor
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.orangeColor
                       ),
                       child: Center(
                         child: Text("Proceed to Book",
@@ -284,16 +341,11 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
           ],
         ),
       ),
+    )
+        :Center(
+      child: CircularProgressIndicator(
+        color: AppColors.yellowColor,
+      ),
     );
   }
-  FetchJSON() async {
-    var Response = await http.get(
-      "https://us-central1-yellochat-12b69.cloudfunctions.net/sampleTestData" as Uri,
-      headers: {"Accept": "application/json"},
-    );
-    if (Response.statusCode == 200){
-      print("Success");
-    }
-  }
-
 }

@@ -353,6 +353,11 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
           ],
         ),
       ),
-    ) : CircularProgressIndicator();
+    )
+        : Center(
+            child: CircularProgressIndicator(
+              color: AppColors.yellowColor,
+            ),
+    );
   }
 }

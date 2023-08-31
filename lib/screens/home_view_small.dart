@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
+import '../data/api/item_api.dart';
+import '../model/item_model.dart';
 import '../widgets/bottom_panel_widget.dart';
 import '../widgets/cleaner_widget.dart';
 import '../widgets/list_hours_widget.dart';
@@ -14,6 +18,20 @@ class HomeViewSmall extends StatefulWidget {
 
 class _HomeViewSmallState extends State<HomeViewSmall> {
 
+  bool showProgress = false;
+  int selectedIndex = 0;
+  int selectedListIndex = 0;
+  //List<Item> itemList = new List<Item>;
+  late String totalCleaner = "";
+  late String totalHours = "";
+  late String imageUrl = "";
+  late int unitPrice ;
+  //late Map<String, dynamic> itemList = {};
+  late List itemList = [];
+  late List<Item> itemListFromModel = [];
+  late int totalPrice = 0;
+  late String selectedItemName = "";
+
   void displayBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -21,15 +39,60 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
           return Container(
             height: MediaQuery.of(context).size.height  * 0.4,
             child: Center(
-              child: BottomPanel(),
+              child: BottomPanel(totalCleaner: selectedIndex+1, itemName: selectedItemName, totalPrice: totalPrice,),
             ),
           );
         });
   }
 
+  void getItemFromApi() async {
+    ItemApi.fetchJSON(context).then((response) async {
+      if(response != null){
+        String responseBody = response.body;
+        //Map<String, dynamic> myMap = json.decode(responseBody);
+        var responseJSON = json.decode(responseBody);
+        totalCleaner = responseJSON["data"]["title"];
+        totalHours = responseJSON["data"]["itemTitle"];
+        imageUrl = responseJSON["data"]["items"][0]["image"];
+        unitPrice = responseJSON["data"]["items"][0]["items"][0]["unitPrice"];
+
+        itemList = json.decode(response.body)["data"]["items"][0]["items"];
+        await Future.delayed(const Duration(seconds: 5));
+        setState(() {
+          showProgress = false;
+        });
+      }else{
+
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      showProgress = true;
+    });
+    getItemFromApi();
+  }
+
+  _onSelected(int index) {
+    setState(() => selectedIndex = index);
+    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
+    //print(totalPrice);
+  }
+
+  _onListSelected(int index) {
+    setState(() => selectedListIndex = index);
+    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
+    selectedItemName = itemList[selectedListIndex]['itemName'];
+    //print(totalPrice);
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return !showProgress ? Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.lightGrayColor.withOpacity(.20),
         leading: Icon(
@@ -84,7 +147,7 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("How many cleaners do you need?",
+                  Text(totalCleaner,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -99,8 +162,8 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 1,
                         childAspectRatio: 1/1.8,
-                        mainAxisSpacing: 20,
-                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 5,
                       ),
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
@@ -108,12 +171,24 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
                       //shrinkWrap: true,
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
-                        return CleanerCard(cleanerCount: index+1, imageUrl: '', color: Colors.amberAccent, borderColor: Colors.amberAccent,);
+                        Color color = selectedIndex != null && selectedIndex == index
+                            ? AppColors.orangeColor
+                            : Colors.white;
+                        Color borderColor = selectedIndex != null && selectedIndex == index
+                            ? AppColors.yellowColor
+                            : AppColors.grayColor.withOpacity(.20);
+                        return GestureDetector(
+                          onTap: (){
+                            _onSelected(index);
+                          },
+                          child: CleanerCard(cleanerCount: index+1,
+                            imageUrl: imageUrl, color: color, borderColor: borderColor,),
+                        );
                       },
                     ),
                   ),
                   SizedBox(height: 20,),
-                  Text("How many hours do you need?",
+                  Text(totalHours,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -125,9 +200,25 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
                   Container(
                     height: 500,
                     child: ListView.builder(
-                        itemCount: 10,
+                        itemCount: itemList.length,
                         itemBuilder: (BuildContext context, int index){
-                          return HourCard(hours: '', unitPrice: 0, title: '', unitOfMeasure: '', color: Colors.amberAccent, borderColor: Colors.amberAccent,);
+                          String itemName = itemList[index]['itemName'];
+                          int unitPrice = itemList[index]['unitPrice'];
+                          String subTitle = itemList[index]['subTitle'];
+                          String unitOfMeasure = itemList[index]['unitOfMeasure'];
+                          Color color = selectedListIndex != null && selectedListIndex == index
+                              ? AppColors.orangeColor
+                              : Colors.white;
+                          Color borderColor = selectedListIndex != null && selectedListIndex == index
+                              ? AppColors.yellowColor
+                              : AppColors.grayColor.withOpacity(.20);
+                          return GestureDetector(
+                              onTap: (){
+                                _onListSelected(index);
+                              },
+                              child: HourCard(hours: itemName, unitPrice: unitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
+                                color: color, borderColor: borderColor,)
+                          );
                         }),
                   ),
                   SizedBox(height: 20,),
@@ -189,7 +280,7 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("AED 85.00",
+                      Text("AED ${totalPrice}",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black,
@@ -247,6 +338,11 @@ class _HomeViewSmallState extends State<HomeViewSmall> {
             SizedBox(height: 20,)
           ],
         ),
+      ),
+    )
+        : Center(
+      child: CircularProgressIndicator(
+        color: AppColors.yellowColor,
       ),
     );
   }
