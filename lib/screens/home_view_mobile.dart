@@ -22,6 +22,7 @@ class HomeViewMobile extends StatefulWidget {
 
 class _HomeViewMobileState extends State<HomeViewMobile> {
 
+  bool showProgress = false;
   int selectedIndex = 0;
   int selectedListIndex = 0;
   //List<Item> itemList = new List<Item>;
@@ -49,8 +50,8 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
   }
 
   void getItemFromApi() async {
-    ItemApi.fetchJSON().then((response) {
-      setState(() {
+    ItemApi.fetchJSON(context).then((response) async {
+      if(response != null){
         String responseBody = response.body;
         //Map<String, dynamic> myMap = json.decode(responseBody);
         var responseJSON = json.decode(responseBody);
@@ -60,13 +61,22 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
         unitPrice = responseJSON["data"]["items"][0]["items"][0]["unitPrice"];
 
         itemList = json.decode(response.body)["data"]["items"][0]["items"];
-      });
+        await Future.delayed(const Duration(seconds: 5));
+        setState(() {
+          showProgress = false;
+        });
+      }else{
+
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      showProgress = true;
+    });
     getItemFromApi();
   }
 
@@ -85,7 +95,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ! showProgress ? Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.lightGrayColor.withOpacity(.20),
         leading: Icon(
@@ -110,11 +120,11 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                 Flexible(
                   child: Text("Dubai International Airport (DXB) - Dubai - United Arab Emirates",
                     style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.brown2Color.withOpacity(.80),
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Montserrat',
-                      overflow: TextOverflow.ellipsis
+                        fontSize: 12,
+                        color: AppColors.brown2Color.withOpacity(.80),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
+                        overflow: TextOverflow.ellipsis
                     ),
                   ),
                 ),
@@ -209,9 +219,9 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                               ? AppColors.yellowColor
                               : AppColors.grayColor.withOpacity(.20);
                           return GestureDetector(
-                            onTap: (){
-                              _onListSelected(index);
-                            },
+                              onTap: (){
+                                _onListSelected(index);
+                              },
                               child: HourCard(hours: itemName, unitPrice: unitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
                                 color: color, borderColor: borderColor,)
                           );
@@ -277,7 +287,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 30, top: 10, right: 30),
                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -343,6 +353,6 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
           ],
         ),
       ),
-    );
+    ) : CircularProgressIndicator();
   }
 }

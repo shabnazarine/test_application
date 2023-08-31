@@ -44,7 +44,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
        // characterList = list.map((model) => Character.fromJson(model)).toList();
       });
     });*/
-    ItemApi.fetchJSON().then((response) {
+    ItemApi.fetchJSON(context).then((response) {
       setState(() {
         String responseBody = response.body;
         //Map<String, dynamic> myMap = json.decode(responseBody);
