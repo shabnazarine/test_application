@@ -5,7 +5,7 @@ import '../constants/colors.dart';
 
 class CleanerCard extends StatelessWidget {
 
-  final int cleanerCount;
+  final String cleanerCount;
   final String imageUrl;
   final Color color;
   final Color borderColor;
@@ -14,6 +14,7 @@ class CleanerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int count = int.parse(cleanerCount);
     return Container(
       //height: 50,
       //width: 200,
@@ -29,14 +30,14 @@ class CleanerCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for(int i =0; i<cleanerCount; i++)
+            for(int i =0; i<count; i++)
               Icon(
                 Icons.person,
                 color: AppColors.yellowColor,
               ),
             //Image.network(imageUrl),
             SizedBox(width: 10,),
-            Text(cleanerCount.toString(),
+            Text(cleanerCount,
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.black,

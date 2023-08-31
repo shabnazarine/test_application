@@ -22,6 +22,7 @@ class HomeViewLarge extends StatefulWidget {
 class _HomeViewLargeState extends State<HomeViewLarge> {
 
   bool showProgress = false;
+  late String displayText = "";
   int selectedIndex = 0;
   int selectedListIndex = 0;
   //List<Item> itemList = new List<Item>;
@@ -31,15 +32,20 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
   late int unitPrice ;
   //late Map<String, dynamic> itemList = {};
   late List itemList = [];
-  late List<Item> itemListFromModel = [];
+  late List subItemList = [];
   late int totalPrice = 0;
   late String selectedItemName = "";
+
+  late String itemName = "";
+  late int subUnitPrice = 0;
+  late String subTitle = "";
+  late String unitOfMeasure = "";
 
   void displayBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
         builder: (ctx) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height  * 0.4,
             child: Center(
               child: BottomPanel(totalCleaner: selectedIndex+1, itemName: selectedItemName, totalPrice: totalPrice,),
@@ -59,7 +65,13 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
         imageUrl = responseJSON["data"]["items"][0]["image"];
         unitPrice = responseJSON["data"]["items"][0]["items"][0]["unitPrice"];
 
-        itemList = json.decode(response.body)["data"]["items"][0]["items"];
+        itemList = json.decode(response.body)["data"]["items"];
+
+        subItemList = itemList[selectedIndex]["items"];
+        //print(temp);
+        //subItemList = json.decode(response.body)["data"]["items"][0]["items"];
+
+        //print(subItemList);
         await Future.delayed(const Duration(seconds: 5));
         setState(() {
           showProgress = false;
@@ -81,14 +93,14 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
 
   _onSelected(int index) {
     setState(() => selectedIndex = index);
-    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
+    totalPrice = subItemList[selectedListIndex]['unitPrice'];
     //print(totalPrice);
   }
 
   _onListSelected(int index) {
     setState(() => selectedListIndex = index);
-    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
-    selectedItemName = itemList[selectedListIndex]['itemName'];
+    totalPrice = subItemList[selectedListIndex]['unitPrice'];
+    selectedItemName = subItemList[selectedListIndex]['itemName'];
     //print(totalPrice);
   }
 
@@ -179,11 +191,16 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                         Color borderColor = selectedIndex != null && selectedIndex == index
                             ? AppColors.yellowColor
                             : AppColors.grayColor.withOpacity(.20);
+                        displayText = itemList[index]['displayText'];
                         return GestureDetector(
                           onTap: (){
                             _onSelected(index);
+                            totalPrice = 0;
+                            selectedListIndex = 0;
+                            subItemList = itemList[selectedIndex]["items"];
+                            //totalPrice = subItemList[selectedListIndex]['unitPrice'];
                           },
-                          child: CleanerCard(cleanerCount: index+1,
+                          child: CleanerCard(cleanerCount: displayText,
                             imageUrl: imageUrl, color: color, borderColor: borderColor,),
                         );
                       },
@@ -202,23 +219,25 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                   Container(
                     height: 500,
                     child: ListView.builder(
-                        itemCount: itemList.length,
+                        itemCount: subItemList.length,
                         itemBuilder: (BuildContext context, int index){
-                          String itemName = itemList[index]['itemName'];
-                          int unitPrice = itemList[index]['unitPrice'];
-                          String subTitle = itemList[index]['subTitle'];
-                          String unitOfMeasure = itemList[index]['unitOfMeasure'];
-                          Color color = selectedListIndex != null && selectedListIndex == index
+
+                          itemName = subItemList[index]['itemName'];
+                          subUnitPrice = subItemList[index]['unitPrice'];
+                          subTitle = subItemList[index]['subTitle'];
+                          unitOfMeasure = subItemList[index]['unitOfMeasure'];
+
+                          Color color = selectedListIndex == index
                               ? AppColors.orangeColor
                               : Colors.white;
-                          Color borderColor = selectedListIndex != null && selectedListIndex == index
+                          Color borderColor = selectedListIndex == index
                               ? AppColors.yellowColor
                               : AppColors.grayColor.withOpacity(.20);
                           return GestureDetector(
                               onTap: (){
                                 _onListSelected(index);
                               },
-                              child: HourCard(hours: itemName, unitPrice: unitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
+                              child: HourCard(hours: itemName, unitPrice: subUnitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
                                 color: color, borderColor: borderColor,)
                           );
                         }),

@@ -1,26 +1,15 @@
+import 'package:test_application/model/sub_item_model.dart';
+
 class Item{
+  final String displayText;
+  int displayOrder;
+  String imageUrl;
+  bool isActive;
+  int count;
   String id;
-  int unitPrice;
-  String itemName;
-  String subTitle;
-  String unitOfMeasure;
-  int minutes;
-  int sort;
+  List<SubItem> subItemList;
 
-  Item(this.id, this.unitPrice, this.itemName, this.subTitle,
-      this.unitOfMeasure, this.minutes, this.sort);
 
-  Item.fromJson(Map <String, dynamic>  json)
-      : id = json['id'],
-        unitPrice = json['unitPrice'],
-        itemName = json['itemName'],
-        subTitle = json['subTitle'],
-        unitOfMeasure = json['id'],
-        minutes = json['minutes'],
-        sort = json['sort'];
-
-  Map<String, dynamic> toJson(){
-    return {'id': id, 'unitPrice': unitPrice, 'itemName': itemName, 'subTitle': subTitle,
-            'unitOfMeasure': unitOfMeasure, 'minutes': minutes, 'sort': sort};
-  }
+  Item(this.displayText, this.displayOrder, this.imageUrl, this.isActive,
+      this.count, this.id, this.subItemList);
 }

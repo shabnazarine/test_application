@@ -3,15 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
-import '../constants/colors.dart';
-import '../constants/colors.dart';
 import '../data/api/item_api.dart';
-import '../model/item_model.dart';
 import '../widgets/bottom_panel_mobile.dart';
-import '../widgets/bottom_panel_widget.dart';
 import '../widgets/cleaner_widget.dart';
 import '../widgets/list_hours_widget.dart';
-import 'package:http/http.dart' as http;
 
 class HomeViewMobile extends StatefulWidget {
   const HomeViewMobile({super.key});
@@ -23,6 +18,7 @@ class HomeViewMobile extends StatefulWidget {
 class _HomeViewMobileState extends State<HomeViewMobile> {
 
   bool showProgress = false;
+  late String displayText = "";
   int selectedIndex = 0;
   int selectedListIndex = 0;
   //List<Item> itemList = new List<Item>;
@@ -32,15 +28,20 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
   late int unitPrice ;
   //late Map<String, dynamic> itemList = {};
   late List itemList = [];
-  late List<Item> itemListFromModel = [];
+  late List subItemList = [];
   late int totalPrice = 0;
   late String selectedItemName = "";
+
+  late String itemName = "";
+  late int subUnitPrice = 0;
+  late String subTitle = "";
+  late String unitOfMeasure = "";
 
   void displayBottomSheet(BuildContext context) {
     showModalBottomSheet(
         context: context,
         builder: (ctx) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height  * 0.4,
             child: Center(
               child: BottomPanelMobile(totalCleaner: selectedIndex+1, itemName: selectedItemName, totalPrice: totalPrice,),
@@ -60,7 +61,13 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
         imageUrl = responseJSON["data"]["items"][0]["image"];
         unitPrice = responseJSON["data"]["items"][0]["items"][0]["unitPrice"];
 
-        itemList = json.decode(response.body)["data"]["items"][0]["items"];
+        itemList = json.decode(response.body)["data"]["items"];
+
+        subItemList = itemList[selectedIndex]["items"];
+        //print(temp);
+        //subItemList = json.decode(response.body)["data"]["items"][0]["items"];
+
+        //print(subItemList);
         await Future.delayed(const Duration(seconds: 5));
         setState(() {
           showProgress = false;
@@ -82,14 +89,14 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
 
   _onSelected(int index) {
     setState(() => selectedIndex = index);
-    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
+    totalPrice = subItemList[selectedListIndex]['unitPrice'];
     //print(totalPrice);
   }
 
   _onListSelected(int index) {
     setState(() => selectedListIndex = index);
-    totalPrice = itemList[selectedListIndex]['unitPrice'] * (selectedIndex+1);
-    selectedItemName = itemList[selectedListIndex]['itemName'];
+    totalPrice = subItemList[selectedListIndex]['unitPrice'];
+    selectedItemName = subItemList[selectedListIndex]['itemName'];
     //print(totalPrice);
   }
 
@@ -113,7 +120,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                 fontFamily: 'Montserrat',
               ),
             ),
-            SizedBox(height: 5,),
+            const SizedBox(height: 5,),
             Row(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -128,8 +135,8 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10,),
-                Text("Change Location",
+                const SizedBox(width: 10,),
+                const Text("Change Location",
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.blueColor,
@@ -137,7 +144,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                     fontFamily: 'Montserrat',
                   ),
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(width: 10,),
               ],
             )
           ],
@@ -154,18 +161,18 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(totalCleaner,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  SizedBox(height: 10,),
-                  Container(
+                  const SizedBox(height: 10,),
+                  SizedBox(
                     height: 80,
                     child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 1,
                         childAspectRatio: 1/1.8,
                         mainAxisSpacing: 5,
@@ -177,58 +184,66 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                       //shrinkWrap: true,
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
-                        Color color = selectedIndex != null && selectedIndex == index
+                        Color color = selectedIndex == index
                             ? AppColors.orangeColor
                             : Colors.white;
-                        Color borderColor = selectedIndex != null && selectedIndex == index
+                        Color borderColor = selectedIndex == index
                             ? AppColors.yellowColor
                             : AppColors.grayColor.withOpacity(.20);
+                        displayText = itemList[index]['displayText'];
                         return GestureDetector(
                           onTap: (){
                             _onSelected(index);
+                            totalPrice = 0;
+                            selectedListIndex = 0;
+                            subItemList = itemList[selectedIndex]["items"];
+                            //totalPrice = subItemList[selectedListIndex]['unitPrice'];
+                           //print(temp);
                           },
-                          child: CleanerCard(cleanerCount: index+1,
+                          child: CleanerCard(cleanerCount: displayText,
                             imageUrl: imageUrl, color: color, borderColor: borderColor,),
                         );
                       },
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Text(totalHours,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  SizedBox(height: 10,),
-                  Container(
+                  const SizedBox(height: 10,),
+                  SizedBox(
                     height: 500,
                     child: ListView.builder(
-                        itemCount: itemList.length,
+                        itemCount: subItemList.length,
                         itemBuilder: (BuildContext context, int index){
-                          String itemName = itemList[index]['itemName'];
-                          int unitPrice = itemList[index]['unitPrice'];
-                          String subTitle = itemList[index]['subTitle'];
-                          String unitOfMeasure = itemList[index]['unitOfMeasure'];
-                          Color color = selectedListIndex != null && selectedListIndex == index
+
+                            itemName = subItemList[index]['itemName'];
+                            subUnitPrice = subItemList[index]['unitPrice'];
+                            subTitle = subItemList[index]['subTitle'];
+                            unitOfMeasure = subItemList[index]['unitOfMeasure'];
+
+                          Color color = selectedListIndex == index
                               ? AppColors.orangeColor
                               : Colors.white;
-                          Color borderColor = selectedListIndex != null && selectedListIndex == index
+                          Color borderColor = selectedListIndex == index
                               ? AppColors.yellowColor
                               : AppColors.grayColor.withOpacity(.20);
                           return GestureDetector(
                               onTap: (){
                                 _onListSelected(index);
                               },
-                              child: HourCard(hours: itemName, unitPrice: unitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
+                              child: HourCard(hours: itemName, unitPrice: subUnitPrice, title: subTitle, unitOfMeasure: unitOfMeasure,
                                 color: color, borderColor: borderColor,)
                           );
                         }),
                   ),
-                  SizedBox(height: 20,),
-                  Text("Mention any special instruction here..",
+                  const SizedBox(height: 20,),
+                  const Text("Mention any special instruction here..",
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -236,7 +251,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   Padding(
                     padding: const EdgeInsets.only(right: 30),
                     child: Container(
@@ -270,7 +285,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                 //width: 500,
                 width: MediaQuery.of(context).size.width,
                 color: AppColors.lightGreenColor.withOpacity(.40),
-                child: Center(
+                child: const Center(
                   child: Text("2 Promos available at checkout",
                     style: TextStyle(
                       fontSize: 12,
@@ -293,8 +308,8 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("AED ${totalPrice}",
-                          style: TextStyle(
+                        Text("AED $totalPrice",
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -303,7 +318,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                         ),
                         Row(
                           children: [
-                            Text("View Order Summary",
+                            const Text("View Order Summary",
                               style: TextStyle(
                                 fontSize: 10,
                                 color: AppColors.brown2Color,
@@ -311,12 +326,12 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                                 fontFamily: 'Montserrat',
                               ),
                             ),
-                            SizedBox(width: 5,),
+                            const SizedBox(width: 5,),
                             GestureDetector(
                               onTap: (){
                                 displayBottomSheet(context);
                               },
-                              child: Icon(
+                              child: const Icon(
                                 Icons.arrow_drop_down_sharp,
                                 color: AppColors.brown2Color,
                               ),
@@ -334,7 +349,7 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                             borderRadius: BorderRadius.circular(5),
                             color: AppColors.orangeColor
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text("Proceed to Book",
                             style: TextStyle(
                               fontSize: 10,
@@ -349,12 +364,12 @@ class _HomeViewMobileState extends State<HomeViewMobile> {
                 ),
               ),
             ),
-            SizedBox(height: 20,)
+            const SizedBox(height: 20,)
           ],
         ),
       ),
     )
-        : Center(
+        : const Center(
             child: CircularProgressIndicator(
               color: AppColors.yellowColor,
             ),
