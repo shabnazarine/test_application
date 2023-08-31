@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
@@ -31,21 +31,21 @@ class CleanerCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for(int i =0; i<count; i++)
-              Icon(
+              const Icon(
                 Icons.person,
                 color: AppColors.yellowColor,
               ),
             //Image.network(imageUrl),
-            SizedBox(width: 10,),
+            const SizedBox(width: 10,),
             Text(cleanerCount,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Montserrat',
               ),
             ),
-            SizedBox(width: 20,),
+            const SizedBox(width: 20,),
           ],
         ),
       ),

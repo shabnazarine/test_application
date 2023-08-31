@@ -7,10 +7,6 @@ import 'package:test_application/widgets/list_hours_widget.dart';
 
 import '../constants/colors.dart';
 import '../data/api/item_api.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-import '../model/item_model.dart';
 
 class HomeViewLarge extends StatefulWidget {
   const HomeViewLarge({super.key});
@@ -124,7 +120,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                 fontFamily: 'Montserrat',
               ),
             ),
-            SizedBox(height: 5,),
+            const SizedBox(height: 5,),
             Row(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -136,8 +132,8 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                     fontFamily: 'Montserrat',
                   ),
                 ),
-                SizedBox(width: 20,),
-                Text("Change Location",
+                const SizedBox(width: 20,),
+                const Text("Change Location",
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.blueColor,
@@ -145,7 +141,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                     fontFamily: 'Montserrat',
                   ),
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(width: 10,),
               ],
             )
           ],
@@ -162,18 +158,18 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(totalCleaner,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  SizedBox(height: 10,),
-                  Container(
+                  const SizedBox(height: 10,),
+                  SizedBox(
                     height: 80,
                     child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 1,
                         childAspectRatio: 1/1.8,
                         mainAxisSpacing: 5,
@@ -185,10 +181,10 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                       //shrinkWrap: true,
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
-                        Color color = selectedIndex != null && selectedIndex == index
+                        Color color = selectedIndex == index
                             ? AppColors.orangeColor
                             : Colors.white;
-                        Color borderColor = selectedIndex != null && selectedIndex == index
+                        Color borderColor = selectedIndex == index
                             ? AppColors.yellowColor
                             : AppColors.grayColor.withOpacity(.20);
                         displayText = itemList[index]['displayText'];
@@ -206,17 +202,17 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Text(totalHours,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  SizedBox(height: 10,),
-                  Container(
+                  const SizedBox(height: 10,),
+                  SizedBox(
                     height: 500,
                     child: ListView.builder(
                         itemCount: subItemList.length,
@@ -242,8 +238,8 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                           );
                         }),
                   ),
-                  SizedBox(height: 20,),
-                  Text("Mention any special instruction here..",
+                  const SizedBox(height: 20,),
+                  const Text("Mention any special instruction here..",
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -251,7 +247,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                       fontFamily: 'Montserrat',
                     ),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   Container(
                     width: 400,
                     height: 80,
@@ -280,7 +276,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                 height: 35,
                 width: 500,
                 color: AppColors.lightGreenColor.withOpacity(.40),
-                child: Center(
+                child: const Center(
                   child: Text("2 Promos available at checkout",
                     style: TextStyle(
                       fontSize: 12,
@@ -301,8 +297,8 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("AED ${totalPrice}",
-                        style: TextStyle(
+                      Text("AED $totalPrice",
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -311,7 +307,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                       ),
                       Row(
                         children: [
-                          Text("View Order Summary",
+                          const Text("View Order Summary",
                             style: TextStyle(
                               fontSize: 10,
                               color: AppColors.brown2Color,
@@ -319,12 +315,12 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                               fontFamily: 'Montserrat',
                             ),
                           ),
-                          SizedBox(width: 5,),
+                          const SizedBox(width: 5,),
                           GestureDetector(
                             onTap: (){
                               displayBottomSheet(context);
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.arrow_drop_down_sharp,
                               color: AppColors.brown2Color,
                             ),
@@ -342,7 +338,7 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                           borderRadius: BorderRadius.circular(5),
                           color: AppColors.orangeColor
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text("Proceed to Book",
                           style: TextStyle(
                             fontSize: 10,
@@ -356,12 +352,12 @@ class _HomeViewLargeState extends State<HomeViewLarge> {
                 ],
               ),
             ),
-            SizedBox(height: 20,)
+            const SizedBox(height: 20,)
           ],
         ),
       ),
     )
-        :Center(
+        :const Center(
       child: CircularProgressIndicator(
         color: AppColors.yellowColor,
       ),

@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import '../../model/item_model.dart';
 
 class ItemApi {
   static Future fetchJSON(context) async {
@@ -12,7 +9,7 @@ class ItemApi {
     if (response.statusCode == 200){
       return response;
     }else{
-      SnackBar snackBar = SnackBar(
+      SnackBar snackBar = const SnackBar(
         content: Text('Unable to fetch data!!!!'),
         behavior: SnackBarBehavior.floating,
       );

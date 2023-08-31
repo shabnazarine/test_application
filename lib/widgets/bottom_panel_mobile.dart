@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:test_application/constants/colors.dart';
 
@@ -27,7 +27,7 @@ class BottomPanelMobile extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 40,),
+        const SizedBox(height: 40,),
         Container(
           width: 300,
           height: 70,
@@ -44,16 +44,16 @@ class BottomPanelMobile extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("${totalCleaner} Cleaner, ${itemName}",
-                      style: TextStyle(
+                    Text("$totalCleaner Cleaner, $itemName",
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black,
                         //fontWeight: FontWeight.bold,
                         fontFamily: 'Montserrat',
                       ),
                     ),
-                    Text("AED ${totalPrice}",
-                      style: TextStyle(
+                    Text("AED $totalPrice",
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black,
                         //fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class BottomPanelMobile extends StatelessWidget {
                   onTap: (){
                     Navigator.pop(context);
                   },
-                  child: Text("Edit",
+                  child: const Text("Edit",
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColors.blueColor,
@@ -88,7 +88,7 @@ class BottomPanelMobile extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Sub Total",
+              const Text("Sub Total",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black,
@@ -96,8 +96,8 @@ class BottomPanelMobile extends StatelessWidget {
                   fontFamily: 'Montserrat',
                 ),
               ),
-              Text("AED ${totalPrice}",
-                style: TextStyle(
+              Text("AED $totalPrice",
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.black,
                   //fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class BottomPanelMobile extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Total (Inclusive 5% VAT)",
+              const Text("Total (Inclusive 5% VAT)",
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.black,
@@ -120,8 +120,8 @@ class BottomPanelMobile extends StatelessWidget {
                   fontFamily: 'Montserrat',
                 ),
               ),
-              Text("AED ${totalPrice}",
-                style: TextStyle(
+              Text("AED $totalPrice",
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.black,
                   //fontWeight: FontWeight.bold,

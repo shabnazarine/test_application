@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
@@ -37,7 +37,7 @@ class HourCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(hours,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -47,7 +47,7 @@ class HourCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 softWrap: true,
               ),
-              SizedBox(width: 20,),
+              const SizedBox(width: 20,),
             ],
           ),
         ),
@@ -60,7 +60,7 @@ class HourCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text("AED 40.00/hr",
+                    const Text("AED 40.00/hr",
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.grayColor,
@@ -69,9 +69,9 @@ class HourCard extends StatelessWidget {
                         decoration: TextDecoration.lineThrough
                       ),
                     ),
-                    SizedBox(width: 5,),
-                    Text("AED" + unitPrice.toString() +"/" + unitOfMeasure,
-                      style: TextStyle(
+                    const SizedBox(width: 5,),
+                    Text("AED$unitPrice/$unitOfMeasure",
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.greenColor,
                         fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class HourCard extends StatelessWidget {
                   ],
                 ),
                 Text(title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.black,
                     //fontWeight: FontWeight.bold,
